@@ -1,92 +1,140 @@
+/*
+  * Board Arduino Nano
+*/
 // Pin defination
 #define OUT_RED_LIGHT 2
 #define OUT_YELLOW_LIGHT  3
 #define OUT_GREEN_LIGHT 4
 
-#define IN_BTN_USER 8
+#define OUT_RED_FOR_PEOPLE  5
+#define OUT_GREEN_FOR_PEOPLE 6
 
 // Time table ms
-const unsigned long red_light_time = 10000L;
-const unsigned long red_yellow_light_time = 2000L;
-const unsigned long green_light_time = 10000L;
-const unsigned long yellow_light_time = 2000L;
+const unsigned long time_light_red_people_red = 2000L;
+const unsigned long time_light_red_yellow_people_red = 5000L;
+const unsigned long time_light_green_people_red = 20000L;
+const unsigned long time_light_yellow_people_red = 2000L;
+const unsigned long time_light_red_people_red_2 = 5000L;
+const unsigned long time_light_red_people_green = 10000L;
 
-unsigned long sample_time=0L;
 unsigned long current_waitting_time;
 
-enum{
-  LIGHT_RED,
-  LIGHT_RED_YELLOW,
-  LIGHT_GREEN,
-  LIGHT_YELLOW
-} state_of_light;
+#define LIGHT_RED_PEOPLE_RED 0
+#define LIGHT_RED_YELLOW_PEOPLE_RED 1
+#define LIGHT_GREEN_PEOPLE_RED 2
+#define LIGHT_YELLOW_PEOPLE_RED 3
+#define LIGHT_RED_PEOPLE_RED_2 4
+#define LIGHT_RED_PEOPLE_GREEN 5
+int state_of_light;
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println("Trafik Lambası Uygulamas");
+
   digitalWrite(OUT_RED_LIGHT,HIGH);
   digitalWrite(OUT_YELLOW_LIGHT,LOW);
   digitalWrite(OUT_GREEN_LIGHT,LOW);
+
+  digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+  digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
 
   pinMode(OUT_RED_LIGHT,OUTPUT);
   pinMode(OUT_YELLOW_LIGHT,OUTPUT);
   pinMode(OUT_GREEN_LIGHT,OUTPUT);
 
-  sample_time = millis();
+  pinMode(OUT_RED_FOR_PEOPLE,OUTPUT);
+  pinMode(OUT_GREEN_FOR_PEOPLE,OUTPUT);
   
-  state_of_light=LIGHT_RED;
-  current_waitting_time=red_light_time;
+  state_of_light=LIGHT_RED_PEOPLE_RED;
+  current_waitting_time=time_light_red_people_red;
 }
 
 void loop() {
-  if(millis() - sample_time >= current_waitting_time){
-    sample_time = millis();
-    next_state();
-  }
-  
   switch(state_of_light){
-    LIGHT_RED:
+    case LIGHT_RED_PEOPLE_RED:
+      Serial.println("LIGHT_RED_PEOPLE_RED");
       digitalWrite(OUT_RED_LIGHT,HIGH);
       digitalWrite(OUT_YELLOW_LIGHT,LOW);
       digitalWrite(OUT_GREEN_LIGHT,LOW);
+
+      digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
       break;
-    LIGHT_RED_YELLOW:
+    case LIGHT_RED_YELLOW_PEOPLE_RED:
+      Serial.println("LIGHT_RED_YELLOW_PEOPLE_RED");
       digitalWrite(OUT_RED_LIGHT,HIGH);
       digitalWrite(OUT_YELLOW_LIGHT,HIGH);
       digitalWrite(OUT_GREEN_LIGHT,LOW);
+      
+      digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
       break;
-    LIGHT_GREEN:
+    case LIGHT_GREEN_PEOPLE_RED:
+      Serial.println("LIGHT_GREEN_PEOPLE_RED");
       digitalWrite(OUT_RED_LIGHT,LOW);
       digitalWrite(OUT_YELLOW_LIGHT,LOW);
       digitalWrite(OUT_GREEN_LIGHT,HIGH);
+      
+      digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
       break;
-    LIGHT_YELLOW:
+    case LIGHT_YELLOW_PEOPLE_RED:
+      Serial.println("LIGHT_YELLOW_PEOPLE_RED");
       digitalWrite(OUT_RED_LIGHT,LOW);
       digitalWrite(OUT_YELLOW_LIGHT,HIGH);
       digitalWrite(OUT_GREEN_LIGHT,LOW);
+      
+      digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
+      break;
+    case LIGHT_RED_PEOPLE_RED_2:
+      Serial.println("LIGHT_RED_PEOPLE_RED_2");
+      digitalWrite(OUT_RED_LIGHT,HIGH);
+      digitalWrite(OUT_YELLOW_LIGHT,LOW);
+      digitalWrite(OUT_GREEN_LIGHT,LOW);
+      
+      digitalWrite(OUT_RED_FOR_PEOPLE,HIGH);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,LOW);
+      break;
+    case LIGHT_RED_PEOPLE_GREEN:
+      Serial.println("LIGHT_RED_PEOPLE_GREEN");
+      digitalWrite(OUT_RED_LIGHT,HIGH);
+      digitalWrite(OUT_YELLOW_LIGHT,LOW);
+      digitalWrite(OUT_GREEN_LIGHT,LOW);
+      
+      digitalWrite(OUT_RED_FOR_PEOPLE,LOW);
+      digitalWrite(OUT_GREEN_FOR_PEOPLE,HIGH);
       break;
   }
-}
-
-int get_state(){
-  return state_of_light;
+  next_state();
+  delay(current_waitting_time);
 }
 
 void next_state(){
   switch(state_of_light){
-    LIGHT_RED:
-      state_of_light = LIGHT_RED_YELLOW;
-      current_waitting_time=red_yellow_light_time;
+    case LIGHT_RED_PEOPLE_RED:
+      state_of_light = LIGHT_RED_YELLOW_PEOPLE_RED;
+      current_waitting_time = time_light_red_people_red;
       break;
-    LIGHT_RED_YELLOW:
-      state_of_light = LIGHT_GREEN;
-      current_waitting_time=green_light_time;
+    case LIGHT_RED_YELLOW_PEOPLE_RED:
+      state_of_light = LIGHT_GREEN_PEOPLE_RED;
+      current_waitting_time = time_light_red_yellow_people_red;
       break;
-    LIGHT_GREEN:
-      state_of_light = LIGHT_YELLOW;
-      current_waitting_time=yellow_light_time;
+    case LIGHT_GREEN_PEOPLE_RED:
+      state_of_light = LIGHT_YELLOW_PEOPLE_RED;
+      current_waitting_time = time_light_green_people_red;
       break;
-    LIGHT_YELLOW:
-      state_of_light = LIGHT_RED;
-      current_waitting_time=red_light_time;
+    case LIGHT_YELLOW_PEOPLE_RED:
+      state_of_light = LIGHT_RED_PEOPLE_RED_2;
+      current_waitting_time = time_light_yellow_people_red;
+      break;
+    case LIGHT_RED_PEOPLE_RED_2:
+      state_of_light = LIGHT_RED_PEOPLE_GREEN;
+      current_waitting_time = time_light_red_people_red_2;
+      break;
+    case LIGHT_RED_PEOPLE_GREEN:
+      state_of_light = LIGHT_RED_PEOPLE_RED;
+      current_waitting_time = time_light_red_people_green;
       break;
   }
 }
