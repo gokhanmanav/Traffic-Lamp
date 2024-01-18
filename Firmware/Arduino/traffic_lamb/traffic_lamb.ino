@@ -6,8 +6,8 @@
 #define OUT_YELLOW_LIGHT  3
 #define OUT_GREEN_LIGHT 4
 
-#define OUT_RED_FOR_PEOPLE  5
-#define OUT_GREEN_FOR_PEOPLE 6
+#define OUT_RED_FOR_PEOPLE  8
+#define OUT_GREEN_FOR_PEOPLE 7
 
 // Time table ms
 const unsigned long time_light_red_people_red = 2000L;
